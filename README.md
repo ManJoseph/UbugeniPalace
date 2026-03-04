@@ -57,6 +57,3 @@ If you need a custom marketplace, a portfolio, or any web application tailored t
 *   **GitHub:** [@ManJoseph](https://github.com/ManJoseph)
 
 Let’s build something amazing together! 🚀
-
----
-*Created with ❤️ in Rwanda.*
