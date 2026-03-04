@@ -37,12 +37,12 @@
                 <h4 class="footer-title">Quick Links</h4>
                 <ul class="footer-links">
                     <li><a href="<?php echo SITE_URL; ?>">Home</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/products.php">All Products</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/artisans.php">Meet Artisans</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/about.php">About Us</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/contact.php">Contact Us</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/faq.php">FAQ</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/shipping.php">Shipping Info</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/products">All Products</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/artisans">Meet Artisans</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/about">About Us</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/contact">Contact Us</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/faq">FAQ</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/shipping">Shipping Info</a></li>
                 </ul>
             </div>
 
@@ -52,7 +52,7 @@
                 <ul class="footer-links">
                     <?php foreach ($categories as $category): ?>
                     <li>
-                        <a href="<?php echo SITE_URL; ?>/pages/products.php?category=<?php echo $category['id']; ?>">
+                        <a href="<?php echo SITE_URL; ?>/pages/products?category=<?php echo $category['id']; ?>">
                             <?php echo htmlspecialchars($category['name']); ?>
                             <span class="category-rw">(<?php echo htmlspecialchars($category['name_kinyarwanda']); ?>)</span>
                         </a>
@@ -65,11 +65,11 @@
             <div class="footer-section customer-service">
                 <h4 class="footer-title">Customer Service</h4>
                 <ul class="footer-links">
-                    <li><a href="<?php echo SITE_URL; ?>/pages/help.php">Help Center</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/returns.php">Returns & Exchanges</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/privacy.php">Privacy Policy</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/terms.php">Terms of Service</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/pages/support.php">Customer Support</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/help">Help Center</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/returns">Returns & Exchanges</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/privacy">Privacy Policy</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/terms">Terms of Service</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/pages/support">Customer Support</a></li>
                 </ul>
             </div>
 

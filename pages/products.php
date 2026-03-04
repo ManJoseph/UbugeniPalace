@@ -60,8 +60,8 @@ $count_query = "
 ";
 
 $total_result = $db->fetchOne($count_query, $params);
-$total_products = $total_result['total'];
-$total_pages = ceil($total_products / $per_page);
+$total_products = $total_result ? $total_result['total'] : 0;
+$total_pages = $total_products > 0 ? ceil($total_products / $per_page) : 1;
 
 // Get products
 $products_query = "

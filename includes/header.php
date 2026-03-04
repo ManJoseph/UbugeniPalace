@@ -100,9 +100,9 @@ $categories = getCategories();
 
         <nav class="nav">
             <a href="<?php echo SITE_URL; ?>" class="nav-link">Home</a>
-            <a href="<?php echo SITE_URL; ?>/pages/artisans.php" class="nav-link">Artisans</a>
-            <a href="<?php echo SITE_URL; ?>/pages/products.php" class="nav-link">Products</a>
-            <a href="<?php echo SITE_URL; ?>/pages/about.php" class="nav-link">About</a>
+            <a href="<?php echo SITE_URL; ?>/pages/artisans" class="nav-link">Artisans</a>
+            <a href="<?php echo SITE_URL; ?>/pages/products" class="nav-link">Products</a>
+            <a href="<?php echo SITE_URL; ?>/pages/about" class="nav-link">About</a>
             <!-- <a href="<?php echo SITE_URL; ?>/pages/contact.php" class="nav-link">Contact</a> -->
         </nav>
 
@@ -111,15 +111,15 @@ $categories = getCategories();
                 <input type="text" placeholder="Search products..." />
                 <button>🔍</button>
             </div>
-            <?php if (isLoggedIn()): ?>
+            <?php if (isLoggedIn() && $current_user): ?>
                 <div class="user-menu">
                     <span>Welcome, <?php echo htmlspecialchars($current_user['full_name']); ?></span>
-                    <a href="<?php echo SITE_URL; ?>/pages/dashboard.php">Dashboard</a>
-                    <a href="<?php echo SITE_URL; ?>/pages/logout.php">Logout</a>
+                    <a href="<?php echo SITE_URL; ?>/pages/dashboard">Dashboard</a>
+                    <a href="<?php echo SITE_URL; ?>/pages/logout">Logout</a>
                 </div>
             <?php else: ?>
                 <button class="login-btn" onclick="openLoginModal()">Login</button>
-                <a href="<?php echo SITE_URL; ?>/pages/register.php" class="signup-btn">Sign Up</a>
+                <a href="<?php echo SITE_URL; ?>/pages/register" class="signup-btn">Sign Up</a>
             <?php endif; ?>
         </div>
     </header>

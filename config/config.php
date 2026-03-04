@@ -12,25 +12,42 @@ if (session_status() == PHP_SESSION_NONE) {
 // Include database configuration
 require_once __DIR__ . '/database.php';
 
-// Site configuration constants
-define('SITE_NAME', 'UbugeniPalace');
-define('SITE_TAGLINE', 'Discover Authentic Rwandan Craftsmanship');
-define('SITE_URL', 'http://localhost/UbugeniPalace');
-define('SITE_EMAIL', 'info@ubugenipalace.rw');
-define('SITE_PHONE', '+250 788 123 456');
+// Load Composer autoloader if it exists
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+    
+    // Load .env file if it exists
+    if (file_exists(__DIR__ . '/../.env')) {
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+        $dotenv->load();
+    }
+}
+
+// site configuration constants
+if (!defined('SITE_NAME')) define('SITE_NAME', getenv('SITE_NAME') ?: 'UbugeniPalace');
+if (!defined('SITE_TAGLINE')) define('SITE_TAGLINE', 'Discover Authentic Rwandan Craftsmanship');
+if (!defined('SITE_URL')) define('SITE_URL', getenv('SITE_URL') ?: 'http://localhost/UbugeniPalace');
+if (!defined('SITE_EMAIL')) define('SITE_EMAIL', 'info@ubugenipalace.rw');
+if (!defined('SITE_PHONE')) define('SITE_PHONE', '+250 788 123 456');
+
+// Cloudinary configuration
+if (!defined('CLOUDINARY_CLOUD_NAME')) define('CLOUDINARY_CLOUD_NAME', getenv('CLOUDINARY_CLOUD_NAME'));
+if (!defined('CLOUDINARY_API_KEY')) define('CLOUDINARY_API_KEY', getenv('CLOUDINARY_API_KEY'));
+if (!defined('CLOUDINARY_API_SECRET')) define('CLOUDINARY_API_SECRET', getenv('CLOUDINARY_API_SECRET'));
+if (!defined('USE_CLOUDINARY')) define('USE_CLOUDINARY', true);
 
 // File upload settings
-define('UPLOAD_PATH', __DIR__ . '/../uploads/');
-define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
-define('ALLOWED_IMAGE_TYPES', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+if (!defined('UPLOAD_PATH')) define('UPLOAD_PATH', __DIR__ . '/../uploads/');
+if (!defined('MAX_FILE_SIZE')) define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
+if (!defined('ALLOWED_IMAGE_TYPES')) define('ALLOWED_IMAGE_TYPES', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
 
 // Pagination settings
-define('PRODUCTS_PER_PAGE', 12);
-define('ARTISANS_PER_PAGE', 8);
+if (!defined('PRODUCTS_PER_PAGE')) define('PRODUCTS_PER_PAGE', 12);
+if (!defined('ARTISANS_PER_PAGE')) define('ARTISANS_PER_PAGE', 8);
 
 // Currency settings
-define('CURRENCY', 'RWF');
-define('CURRENCY_SYMBOL', 'RWF');
+if (!defined('CURRENCY')) define('CURRENCY', 'RWF');
+if (!defined('CURRENCY_SYMBOL')) define('CURRENCY_SYMBOL', 'RWF');
 
 // Error reporting (disable in production)
 error_reporting(E_ALL);
@@ -65,10 +82,11 @@ function getCurrentUser() {
     }
     
     global $db;
-    return $db->fetchOne(
+    $user = $db->fetchOne(
         "SELECT * FROM users WHERE id = ?", 
         [$_SESSION['user_id']]
     );
+    return $user ?: null;
 }
 
 function redirectTo($url) {
@@ -107,6 +125,32 @@ function uploadImage($file, $folder = 'general') {
     if ($file['size'] > MAX_FILE_SIZE) {
         return false;
     }
+
+    // Use Cloudinary if credentials are provided
+    if (CLOUDINARY_CLOUD_NAME && CLOUDINARY_API_KEY && CLOUDINARY_API_SECRET) {
+        try {
+            // Check if Cloudinary class exists (installed via composer)
+            if (class_exists('Cloudinary\Cloudinary')) {
+                $cloudinary = new Cloudinary\Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => CLOUDINARY_CLOUD_NAME,
+                        'api_key'    => CLOUDINARY_API_KEY,
+                        'api_secret' => CLOUDINARY_API_SECRET,
+                    ],
+                ]);
+
+                $result = $cloudinary->uploadApi()->upload($file['tmp_name'], [
+                    'folder' => 'ubugenipalace/' . $folder,
+                    'resource_type' => 'image'
+                ]);
+
+                return $result['secure_url'];
+            }
+        } catch (Exception $e) {
+            error_log("Cloudinary Upload Error: " . $e->getMessage());
+            // Fallback to local upload if Cloudinary fails
+        }
+    }
     
     $upload_dir = UPLOAD_PATH . $folder . '/';
     if (!is_dir($upload_dir)) {
@@ -128,9 +172,40 @@ function getImageUrl($image_path) {
         return SITE_URL . '/assets/images/icons/user.svg';
     }
     
-    // Check if it's already a full URL
-    if (strpos($image_path, 'http') === 0) {
+    // Check if it's already a full URL (like Cloudinary secure_url)
+    $is_remote = (strpos($image_path, 'http') === 0 || strpos($image_path, 'https') === 0);
+
+    // Fallback logic if Cloudinary is disabled
+    if (!USE_CLOUDINARY && $is_remote) {
+        if (strpos($image_path, 'ubugenipalace/categories/') !== false) {
+            $filename = basename($image_path);
+            $category_name = pathinfo($filename, PATHINFO_FILENAME);
+            $mapping = [
+                'pottery' => 'products/pottery/pot1.jpeg',
+                'baskets' => 'products/baskets/basket1.jpeg',
+                'jewelry' => 'products/jewelry/jewery1.jpeg',
+                'textiles' => 'products/textiles/textile1.jpeg',
+                'home_decor' => 'products/home/home1.jpeg',
+                'paintings' => 'products/paints/paint1.jpeg'
+            ];
+            if (isset($mapping[$category_name])) {
+                return SITE_URL . '/assets/images/' . $mapping[$category_name];
+            }
+        }
         return $image_path;
+    }
+
+    if ($is_remote) {
+        return $image_path;
+    }
+
+    // If Cloudinary is configured, we can construct the URL if the path looks like a Cloudinary public ID
+    // or if we want to serve our local assets via Cloudinary (if they've been migrated)
+    if (defined('CLOUDINARY_CLOUD_NAME') && CLOUDINARY_CLOUD_NAME && USE_CLOUDINARY) {
+        // If the path contains 'res.cloudinary.com', it's already a Cloudinary URL
+        if (strpos($image_path, 'res.cloudinary.com') !== false) {
+            return $image_path;
+        }
     }
     
     // Check if it's an uploaded image (with or without uploads/ prefix)
@@ -150,6 +225,7 @@ function getImageUrl($image_path) {
         return SITE_URL . '/assets/images/icons/user.svg';
     }
     
+    // Default to local assets folder
     return SITE_URL . '/assets/images/' . $image_path;
 }
 

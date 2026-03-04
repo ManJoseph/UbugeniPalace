@@ -47,10 +47,10 @@ include 'includes/header.php';
                         of authentic craftsmanship.
                     </p>
                     <div class="hero-buttons">
-                        <a href="pages/products.php" class="btn btn-primary">
+                        <a href="pages/products" class="btn btn-primary">
                             Explore Products
                         </a>
-                        <a href="pages/artisans.php" class="btn btn-secondary">
+                        <a href="pages/artisans" class="btn btn-secondary">
                             Meet Artisans
                         </a>
                     </div>
@@ -85,25 +85,25 @@ include 'includes/header.php';
                 
                 <div class="categories-grid">
                     <?php 
-                    // Define category folders and their representative images
+                    // Define category Cloudinary URLs
                     $category_images = [
-                        'Pottery' => 'pottery/pot1.jpeg',
-                        'Baskets' => 'baskets/basket1.jpeg', 
-                        'Jewelry' => 'jewelry/jewery1.jpeg',
-                        'Textiles' => 'textiles/textile1.jpeg',
-                        'Home Decor' => 'home/home1.jpeg',
-                        'Paintings' => 'paints/paint1.jpeg'
+                        'Pottery' => 'https://res.cloudinary.com/dncja0ipr/image/upload/v1772635998/ubugenipalace/categories/pottery.jpg',
+                        'Baskets' => 'https://res.cloudinary.com/dncja0ipr/image/upload/v1772635999/ubugenipalace/categories/baskets.jpg', 
+                        'Jewelry' => 'https://res.cloudinary.com/dncja0ipr/image/upload/v1772636000/ubugenipalace/categories/jewelry.jpg',
+                        'Textiles' => 'https://res.cloudinary.com/dncja0ipr/image/upload/v1772636001/ubugenipalace/categories/textiles.jpg',
+                        'Home Decor' => 'https://res.cloudinary.com/dncja0ipr/image/upload/v1772636002/ubugenipalace/categories/home_decor.jpg',
+                        'Paintings' => 'https://res.cloudinary.com/dncja0ipr/image/upload/v1772636003/ubugenipalace/categories/paintings.jpg'
                     ];
                     
                     foreach ($categories as $category): 
                         // Get the representative image for this category
                         $category_image = isset($category_images[$category['name']]) 
                             ? $category_images[$category['name']] 
-                            : 'products/pottery/pot1.jpeg'; // fallback image
+                            : 'products/pottery/pot1.jpeg'; // fallback local image
                     ?>
                     <article class="category-card" data-category="<?php echo $category['id']; ?>">
                         <div class="category-image">
-                            <img src="assets/images/products/<?php echo $category_image; ?>" 
+                            <img src="<?php echo getImageUrl($category_image); ?>" 
                                  alt="<?php echo htmlspecialchars($category['name']); ?>" 
                                  loading="lazy">
                             <div class="category-overlay">
@@ -113,7 +113,7 @@ include 'includes/header.php';
                                         <span class="english"><?php echo htmlspecialchars($category['name']); ?></span>
                                     </h3>
                                     <p class="category-description"><?php echo htmlspecialchars($category['description']); ?></p>
-                                    <a href="pages/products.php?category=<?php echo $category['id']; ?>" class="category-link">
+                                    <a href="pages/products?category=<?php echo $category['id']; ?>" class="category-link">
                                         Shop Now <span class="arrow">→</span>
                                     </a>
                                 </div>
@@ -147,7 +147,7 @@ include 'includes/header.php';
                                 <?php endif; ?>
                             </div>
                             <div class="product-actions">
-                                <a href="pages/product-details.php?id=<?php echo $product['id']; ?>" class="btn-icon view">
+                                <a href="pages/product-details?id=<?php echo $product['id']; ?>" class="btn-icon view">
                                     <span>View Details</span>
                                 </a>
                             </div>
@@ -155,12 +155,12 @@ include 'includes/header.php';
                         <div class="product-info">
                             <div class="product-category"><?php echo htmlspecialchars($product['category_name']); ?></div>
                             <h3 class="product-name">
-                                <a href="pages/product-details.php?id=<?php echo $product['id']; ?>">
+                                <a href="pages/product-details?id=<?php echo $product['id']; ?>">
                                     <?php echo htmlspecialchars($product['name']); ?>
                                 </a>
                             </h3>
                             <div class="product-artisan">
-                                by <a href="pages/artisan-profile.php?id=<?php echo $product['artisan_id']; ?>">
+                                by <a href="pages/artisan-profile?id=<?php echo $product['artisan_id']; ?>">
                                     <?php echo htmlspecialchars($product['artisan_name']); ?>
                                 </a>
                                 <div class="artisan-rating">
@@ -188,7 +188,7 @@ include 'includes/header.php';
                 </div>
                 
                 <div class="section-footer">
-                    <a href="pages/products.php" class="btn btn-outline">View All Products</a>
+                    <a href="pages/products" class="btn btn-outline">View All Products</a>
                 </div>
             </div>
         </section>
@@ -209,14 +209,14 @@ include 'includes/header.php';
                                  alt="<?php echo htmlspecialchars($artisan['full_name']); ?>" 
                                  loading="lazy">
                             <div class="artisan-overlay">
-                                <a href="pages/artisan-profile.php?id=<?php echo $artisan['id']; ?>" class="view-profile">
+                                <a href="pages/artisan-profile?id=<?php echo $artisan['id']; ?>" class="view-profile">
                                     View Profile
                                 </a>
                             </div>
                         </div>
                         <div class="artisan-info">
                             <h3 class="artisan-name">
-                                <a href="pages/artisan-profile.php?id=<?php echo $artisan['id']; ?>">
+                                <a href="pages/artisan-profile?id=<?php echo $artisan['id']; ?>">
                                     <?php echo htmlspecialchars($artisan['full_name']); ?>
                                 </a>
                             </h3>
@@ -242,7 +242,7 @@ include 'includes/header.php';
                 </div>
                 
                 <div class="section-footer">
-                    <a href="pages/artisans.php" class="btn btn-outline">Meet All Artisans</a>
+                    <a href="pages/artisans" class="btn btn-outline">Meet All Artisans</a>
                 </div>
             </div>
         </section>
@@ -284,7 +284,7 @@ include 'includes/header.php';
                                 </div>
                             </div>
                         </div>
-                        <a href="pages/about.php" class="btn btn-primary">Learn More About Us</a>
+                        <a href="pages/about" class="btn btn-primary">Learn More About Us</a>
                     </div>
                     <div class="about-image">
                         <img src="assets/images/heroes/hero-artisans.jpg" alt="Rwandan Artisans" loading="lazy">
@@ -374,7 +374,7 @@ include 'includes/header.php';
                 card.addEventListener('click', function(e) {
                     if (!e.target.closest('a')) {
                         const artisanId = this.dataset.artisan;
-                        window.location.href = `pages/artisan-profile.php?id=${artisanId}`;
+                        window.location.href = `pages/artisan-profile?id=${artisanId}`;
                     }
                 });
             });

@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    container_name: ubugenipalace_app
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=development

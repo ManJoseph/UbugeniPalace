@@ -51,8 +51,8 @@ $count_query = "
 ";
 
 $total_result = $db->fetchOne($count_query, $params);
-$total_artisans = $total_result['total'];
-$total_pages = ceil($total_artisans / $per_page);
+$total_artisans = $total_result ? $total_result['total'] : 0;
+$total_pages = $total_artisans > 0 ? ceil($total_artisans / $per_page) : 1;
 
 // Get artisans
 $artisans_query = "
